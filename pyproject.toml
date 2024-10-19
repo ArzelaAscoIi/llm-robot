@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "sip"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
@@ -7,7 +7,7 @@ name = "llm-hexapot"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 license = "MIT"
 keywords = []
 authors = [
@@ -16,6 +16,8 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
@@ -24,7 +26,10 @@ dependencies = [
   "opencv-python-headless",
   "opencv-contrib-python-headless",
   #"PyQt5==5.15.2", # enable just on RPI
-  # "mpu6050-raspberrypi",  # enable just on RPI
+  "mpu6050-raspberrypi",  # enable just on RPI
+  "rpi_ws281x",
+  "RPi.GPIO",
+  "smbus"
 ]
 
 [project.urls]
@@ -80,11 +85,6 @@ implementation = "hatchling.build.hooks.manylinux:manylinux"
 [tool.hatch.build.targets.sdist]
 exclude = ["/.github", "/docs", "/.gitignore"]
 
-[tool.sip.metadata]
-name = "llm-hexapot"
-
-# [tool.sip.bindings.PyQt5]
-# qmake-QT = ["core", "gui", "widgets"]
 
 # [tool.pyqt-builder]
 # qmake-settings = ["core", "gui", "widgets"]

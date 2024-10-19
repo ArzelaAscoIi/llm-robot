@@ -2,7 +2,7 @@
 import time
 import math
 import os
-from Kalman import *
+from llm_hexapot.freenove.Kalman import *
 from mpu6050 import mpu6050
 
 

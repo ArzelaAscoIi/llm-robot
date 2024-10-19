@@ -8,10 +8,10 @@ import threading
 import numpy as np
 import RPi.GPIO as GPIO
 
-from IMU import IMU
-from PID import Incremental_PID
-from Servo import Servo
-from Command import COMMAND as cmd
+from llm_hexapot.freenove.IMU import IMU
+from llm_hexapot.freenove.PID import Incremental_PID
+from llm_hexapot.freenove.Servo import Servo
+from llm_hexapot.freenove.Command import COMMAND as cmd
 
 
 class Control:

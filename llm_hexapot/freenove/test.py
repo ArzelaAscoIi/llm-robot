@@ -1,11 +1,11 @@
 import time
 from typing import NoReturn
-from Led import Led, Color
-from Ultrasonic import Ultrasonic
-from Servo import Servo
-from ADC import ADC
-from Buzzer import Buzzer
-from Control import Control  # Assuming Control is needed, though not used in the provided code
+from llm_hexapot.freenove.Led import Led, Color
+from llm_hexapot.freenove.Ultrasonic import Ultrasonic
+from llm_hexapot.freenove.Servo import Servo
+from llm_hexapot.freenove.ADC import ADC
+from llm_hexapot.freenove.Buzzer import Buzzer
+from llm_hexapot.freenove.Control import Control  # Assuming Control is needed, though not used in the provided code
 
 led = Led()
 ultrasonic = Ultrasonic()

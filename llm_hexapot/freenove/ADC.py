@@ -1,6 +1,6 @@
 import smbus
 import time
-from ADCDevice import *
+from llm_hexapot.freenove.ADCDevice import *
 
 
 class ADC:
