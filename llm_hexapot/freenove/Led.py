@@ -1,6 +1,7 @@
 # -*-coding: utf-8 -*-
 import time
 from rpi_ws281x import *
+import os
 
 # LED strip configuration:
 LED_COUNT = 7  # Number of LED pixels.
@@ -15,24 +16,24 @@ LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 # Define functions which animate LEDs in various ways.
 class Led:
     def __init__(self):
-        self.LedMod = "1"
-        self.colour = [0, 0, 0]
-        # Control the sending order of color data
-        self.ORDER = "RGB"
-        # Create NeoPixel object with appropriate configuration.
-        self.strip = Adafruit_NeoPixel(
-            LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL
-        )
-        # Add error handling for initialization
-        try:
-            self.strip.begin()
-        except RuntimeError as e:
-            print(f"Error initializing LED strip: {e}")
-            print("Try running the script with sudo privileges or adjust permissions.")
-            # Optionally, you can set a flag to indicate initialization failed
-            self.initialized = False
+        self.result = os.popen("cat /proc/device-tree/model")
+        self.s = self.result.read()
+        if "Raspberry Pi 5 Model " in self.s:
+            print("Hardware not supported")
+            self.Ledsupported = 0
         else:
-            self.initialized = True
+            print("Hardware supported")
+            self.Ledsupported = 1
+            self.LedMod = "1"
+            self.colour = [0, 0, 0]
+            # Control the sending order of color data
+            self.ORDER = "RGB"
+            # Create NeoPixel object with appropriate configuration.
+            self.strip = Adafruit_NeoPixel(
+                LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL
+            )
+            # Intialize the library (must be called once before other functions).
+            self.strip.begin()
 
     def LED_TYPR(self, order, R_G_B):
         B = R_G_B & 255
@@ -117,11 +118,6 @@ class Led:
         self.strip.show()
 
     def light(self, data):
-        # Check if initialization was successful before proceeding
-        if not hasattr(self, "initialized") or not self.initialized:
-            print("LED strip not initialized. Skipping light control.")
-            return
-
         oldMod = self.LedMod
         if len(data) < 4:
             self.LedMod = data[1]

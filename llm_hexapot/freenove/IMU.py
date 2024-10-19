@@ -3,7 +3,7 @@ import time
 import math
 import os
 from llm_hexapot.freenove.Kalman import *
-from mpu6050 import mpu6050
+from llm_hexapot.freenove.mpu6050 import mpu6050
 
 
 class IMU:

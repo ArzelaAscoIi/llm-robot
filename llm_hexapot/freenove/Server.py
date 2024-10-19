@@ -4,7 +4,11 @@ import time
 import fcntl
 import socket
 import struct
-import picamera
+from picamera2 import Picamera2, Preview
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput
+from picamera2.encoders import Quality
+from threading import Condition
 import threading
 from Led import *
 from Servo import *
@@ -16,9 +20,31 @@ from Ultrasonic import *
 from Command import COMMAND as cmd
 
 
+class StreamingOutput(io.BufferedIOBase):
+    def __init__(self):
+        self.frame = None
+        self.condition = Condition()
+
+    def write(self, buf):
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
+
+
 class Server:
     def __init__(self):
         self.tcp_flag = False
+        self.led = Led()
+        self.adc = ADC()
+        self.servo = Servo()
+        self.buzzer = Buzzer()
+        self.control = Control()
+        self.sonic = Ultrasonic()
+        self.control.Thread_conditiona.start()
+
+    def get_interface_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", b"wlan0"[:15]))[20:24])
 
     def turn_on_server(self):
         # ip adress
@@ -65,35 +91,27 @@ class Server:
         except:
             pass
         self.server_socket.close()
-        try:
-            with picamera.PiCamera() as camera:
-                camera.resolution = (990, 810)  # pi camera resolution
-                camera.framerate = 24  # 15 frames/sec
-                camera.saturation = 80  # Set image video saturation
-                camera.brightness = 50  # Set the brightness of the image (50 indicates the state of white balance)
-                # camera.iso = 400
-                time.sleep(2)  # give 2 secs for camera to initilize
-                start = time.time()
-                stream = io.BytesIO()
-                # send jpeg format video stream
-                print("Start transmit ... ")
-                for foo in camera.capture_continuous(stream, "jpeg", use_video_port=True):
-                    try:
-                        self.connection.flush()
-                        stream.seek(0)
-                        b = stream.read()
-                        lengthBin = struct.pack("L", len(b))
-                        self.connection.write(lengthBin)
-                        self.connection.write(b)
-                        stream.seek(0)
-                        stream.truncate()
-                    except BaseException as e:
-                        # print (e)
-                        print("End transmit ... ")
-                        break
-        except BaseException as e:
-            # print(e)
-            print("Camera uninit")
+        print("socket video connected ... ")
+        camera = Picamera2()
+        camera.configure(camera.create_video_configuration(main={"size": (400, 300)}))
+        output = StreamingOutput()
+        encoder = JpegEncoder(q=90)
+        camera.start_recording(encoder, FileOutput(output), quality=Quality.VERY_HIGH)
+        while True:
+            with output.condition:
+                output.condition.wait()
+                frame = output.frame
+            try:
+                lenFrame = len(output.frame)
+                # print("output .length:",lenFrame)
+                lengthBin = struct.pack("<I", lenFrame)
+                self.connection.write(lengthBin)
+                self.connection.write(frame)
+            except Exception as e:
+                camera.stop_recording()
+                camera.close()
+                print("End transmit ... ")
+                break
 
     def receive_instruction(self):
         try:
@@ -141,26 +159,26 @@ class Server:
                     except:
                         pass
                 elif cmd.CMD_LED in data:
-                    try:
-                        stop_thread(thread_led)
-                    except:
-                        pass
-                    thread_led = threading.Thread(target=self.led.light, args=(data,))
-                    thread_led.start()
+                    if self.led.Ledsupported == 1:
+                        try:
+                            stop_thread(thread_led)
+                        except:
+                            pass
+                        thread_led = threading.Thread(target=self.led.light, args=(data,))
+                        thread_led.start()
+
                 elif cmd.CMD_LED_MOD in data:
-                    try:
-                        stop_thread(thread_led)
-                        # print("stop,yes")
-                    except:
-                        # print("stop,no")
-                        pass
-                    thread_led = threading.Thread(target=self.led.light, args=(data,))
-                    thread_led.start()
+                    if self.led.Ledsupported == 1:
+                        try:
+                            stop_thread(thread_led)
+                            # print("stop,yes")
+                        except:
+                            # print("stop,no")
+                            pass
+                        thread_led = threading.Thread(target=self.led.light, args=(data,))
+                        thread_led.start()
                 elif cmd.CMD_SONIC in data:
-                    command = cmd.CMD_SONIC + "#" + str(self.sonic.getDistance()) + "\n"
-                    self.send_data(self.connection1, command)
-                elif cmd.CMD_GET_ANGLES in data:
-                    command = cmd.CMD_GET_ANGLES + "#" + str(self.control.getAngles()) + "\n"
+                    command = cmd.CMD_SONIC + "#" + str(self.sonic.get_distance()) + "\n"
                     self.send_data(self.connection1, command)
                 elif cmd.CMD_HEAD in data:
                     if len(data) == 3:
@@ -181,9 +199,9 @@ class Server:
                         self.control.relax_flag = False
                 elif cmd.CMD_SERVOPOWER in data:
                     if data[1] == "0":
-                        GPIO.output(self.control.GPIO_4, True)
+                        GPIO_4.on()
                     else:
-                        GPIO.output(self.control.GPIO_4, False)
+                        GPIO_4.off()
 
                 else:
                     self.control.order = data

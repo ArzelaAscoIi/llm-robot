@@ -1,59 +1,65 @@
 import time
-from typing import NoReturn
-from llm_hexapot.freenove.Led import Led, Color
-from llm_hexapot.freenove.Ultrasonic import Ultrasonic
-from llm_hexapot.freenove.Servo import Servo
-from llm_hexapot.freenove.ADC import ADC
-from llm_hexapot.freenove.Buzzer import Buzzer
-from llm_hexapot.freenove.Control import Control  # Assuming Control is needed, though not used in the provided code
+from Led import *
 
 led = Led()
+
+
+def test_Led():
+    if led.Ledsupported == 1:
+        try:
+            # Red wipe
+            print("\nRed wipe")
+            led.colorWipe(led.strip, Color(255, 0, 0))
+            time.sleep(1)
+
+            # Green wipe
+            print("\nGreen wipe")
+            led.colorWipe(led.strip, Color(0, 255, 0))
+            time.sleep(1)
+
+            # Blue wipe
+            print("\nBlue wipe")
+            led.colorWipe(led.strip, Color(0, 0, 255))
+            time.sleep(1)
+
+            # White wipe
+            print("\nWhite wipe")
+            led.colorWipe(led.strip, Color(255, 255, 255))
+            time.sleep(1)
+
+            led.colorWipe(led.strip, Color(0, 0, 0))  # turn off the light
+            print("\nEnd of program")
+        except KeyboardInterrupt:
+            led.colorWipe(led.strip, Color(0, 0, 0))  # turn off the light
+            print("\nEnd of program")
+    else:
+        try:
+            print("\nRaspberry PI 5 is currently being used, which is unsupported hardware.")
+        except KeyboardInterrupt:
+            print("\nEnd of program")
+
+
+from Ultrasonic import *
+
 ultrasonic = Ultrasonic()
-servo = Servo()
-adc = ADC()
-buzzer = Buzzer()
 
 
-def test_Led() -> None:
-    try:
-        # Red wipe
-        print("\nRed wipe")
-        led.colorWipe(led.strip, Color(255, 0, 0))
-        time.sleep(1)
-
-        # Green wipe
-        print("\nGreen wipe")
-        led.colorWipe(led.strip, Color(0, 255, 0))
-        time.sleep(1)
-
-        # Blue wipe
-        print("\nBlue wipe")
-        led.colorWipe(led.strip, Color(0, 0, 255))
-        time.sleep(1)
-
-        # White wipe
-        print("\nWhite wipe")
-        led.colorWipe(led.strip, Color(255, 255, 255))
-        time.sleep(1)
-
-        led.colorWipe(led.strip, Color(0, 0, 0))  # turn off the light
-        print("\nEnd of program")
-    except KeyboardInterrupt:
-        led.colorWipe(led.strip, Color(0, 0, 0))  # turn off the light
-        print("\nEnd of program")
-
-
-def test_Ultrasonic() -> NoReturn:
+def test_Ultrasonic():
     try:
         while True:
-            data: float = ultrasonic.getDistance()  # Get the value
-            print(f"Obstacle distance is {data} CM")
+            data = ultrasonic.get_distance()  # Get the value
+            print("Obstacle distance is " + str(data) + "CM")
             time.sleep(1)
     except KeyboardInterrupt:
         print("\nEnd of program")
 
 
-def test_Servo() -> None:
+from Servo import *
+
+servo = Servo()
+
+
+def test_Servo():
     try:
         for i in range(50):
             servo.setServoAngle(15, 90 + i)
@@ -84,17 +90,27 @@ def test_Servo() -> None:
         print("\nEnd of program")
 
 
-def test_Adc() -> NoReturn:
+from ADC import *
+
+adc = ADC()
+
+
+def test_Adc():
     try:
         while True:
-            power: float = adc.batteryPower()
-            print(f"The battery voltage is {power}\n")
+            Power = adc.batteryPower()
+            print("The battery voltage is " + str(Power) + "\n")
             time.sleep(1)
     except KeyboardInterrupt:
         print("\nEnd of program")
 
 
-def test_Buzzer() -> None:
+from Buzzer import *
+
+buzzer = Buzzer()
+
+
+def test_Buzzer():
     try:
         buzzer.run("1")
         time.sleep(1)
@@ -115,16 +131,16 @@ from Control import *
 
 
 # Main program logic follows:
-def aa() -> NoReturn:
+def aa():
     while True:
         test_Led()
-        # power = adc.batteryPower()
-        # print(f"The battery voltage is {power}\n")
-        data: float = ultrasonic.getDistance()  # Get the value
-        print(f"Obstacle distance is {data} CM")
+        # Power=adc.batteryPower()
+        # print ("The battery voltage is "+str(Power)+'\n')
+        data = ultrasonic.getDistance()  # Get the value
+        print("Obstacle distance is " + str(data) + "CM")
 
 
-def bb() -> NoReturn:
+def bb():
     while True:
         for i in range(30, 150, 1):
             servo.setServoAngle(1, i)
@@ -138,3 +154,22 @@ def bb() -> NoReturn:
         for i in range(150, 90, -1):
             servo.setServoAngle(0, i)
             time.sleep(0.05)
+
+
+if __name__ == "__main__":
+    print("Program is starting ... ")
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Parameter error: Please assign the device")
+        exit()
+    if sys.argv[1] == "Led":
+        test_Led()
+    elif sys.argv[1] == "Ultrasonic":
+        test_Ultrasonic()
+    elif sys.argv[1] == "Servo":
+        test_Servo()
+    elif sys.argv[1] == "ADC":
+        test_Adc()
+    elif sys.argv[1] == "Buzzer":
+        test_Buzzer()

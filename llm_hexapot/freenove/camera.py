@@ -1,5 +1,4 @@
-from picamera import PiCamera
-from time import sleep
+from picamera2 import Picamera2
 
-camera = PiCamera()
-camera.capture("image.jpg")
+picam2 = Picamera2()
+picam2.start_and_capture_file("image.jpg")
