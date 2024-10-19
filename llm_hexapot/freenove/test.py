@@ -1,5 +1,5 @@
 import time
-from Led import *
+from llm_hexapot.freenove.Led import *
 
 led = Led()
 

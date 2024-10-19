@@ -10,14 +10,14 @@ from picamera2.outputs import FileOutput
 from picamera2.encoders import Quality
 from threading import Condition
 import threading
-from Led import *
-from Servo import *
-from Thread import *
-from Buzzer import *
-from Control import *
-from ADC import *
-from Ultrasonic import *
-from Command import COMMAND as cmd
+from llm_hexapot.freenove.Led import *
+from llm_hexapot.freenove.Servo import *
+from llm_hexapot.freenove.Thread import *
+from llm_hexapot.freenove.Buzzer import *
+from llm_hexapot.freenove.Control import *
+from llm_hexapot.freenove.ADC import *
+from llm_hexapot.freenove.Ultrasonic import *
+from llm_hexapot.freenove.Command import COMMAND as cmd
 
 
 class StreamingOutput(io.BufferedIOBase):
