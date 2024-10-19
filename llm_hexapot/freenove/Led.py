@@ -23,8 +23,16 @@ class Led:
         self.strip = Adafruit_NeoPixel(
             LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL
         )
-        # Intialize the library (must be called once before other functions).
-        self.strip.begin()
+        # Add error handling for initialization
+        try:
+            self.strip.begin()
+        except RuntimeError as e:
+            print(f"Error initializing LED strip: {e}")
+            print("Try running the script with sudo privileges or adjust permissions.")
+            # Optionally, you can set a flag to indicate initialization failed
+            self.initialized = False
+        else:
+            self.initialized = True
 
     def LED_TYPR(self, order, R_G_B):
         B = R_G_B & 255
@@ -109,6 +117,11 @@ class Led:
         self.strip.show()
 
     def light(self, data):
+        # Check if initialization was successful before proceeding
+        if not hasattr(self, "initialized") or not self.initialized:
+            print("LED strip not initialized. Skipping light control.")
+            return
+
         oldMod = self.LedMod
         if len(data) < 4:
             self.LedMod = data[1]
