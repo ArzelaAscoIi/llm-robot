@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "sip"]
 build-backend = "hatchling.build"
 
 [project]
@@ -19,12 +19,12 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "PyQt5==5.15.2",
+  "numpy",
   "Pillow",
   "opencv-python-headless",
   "opencv-contrib-python-headless",
-  "numpy",
-  "mpu6050-raspberrypi",
+  #"PyQt5==5.15.2", # enable just on RPI
+  # "mpu6050-raspberrypi",  # enable just on RPI
 ]
 
 [project.urls]
@@ -33,40 +33,37 @@ Issues = "https://github.com/unknown/llm-hexapot/issues"
 Source = "https://github.com/unknown/llm-hexapot"
 
 [tool.hatch.version]
-path = "src/llm_hexapot/__about__.py"
+path = "llm_hexapot/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
-  "coverage[toml]>=6.5",
   "pytest",
-  "PyQt5==5.15.2",
   "Pillow",
   "opencv-python-headless",
   "opencv-contrib-python-headless",
   "numpy",
+  # "PyQt5==5.15.2",# enable just on RPI
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
-cov-report = ["- coverage combine", "coverage report"]
-cov = ["test-cov", "cov-report"]
+check = "python -m llm_hexapot.check {args}"
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+python = ["3.12"]
 
 [tool.hatch.envs.types]
 dependencies = ["mypy>=1.0.0"]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/llm_hexapot tests}"
+check = "mypy --install-types --non-interactive {args:llm_hexapot tests}"
 
 [tool.coverage.run]
 source_pkgs = ["llm_hexapot", "tests"]
 branch = true
 parallel = true
-omit = ["src/llm_hexapot/__about__.py"]
+omit = ["llm_hexapot/__about__.py"]
 
 [tool.coverage.paths]
-llm_hexapot = ["src/llm_hexapot", "*/llm-hexapot/src/llm_hexapot"]
+llm_hexapot = ["llm_hexapot", "*/llm-hexapot"]
 tests = ["tests", "*/llm-hexapot/tests"]
 
 [tool.coverage.report]
@@ -78,3 +75,12 @@ implementation = "hatchling.build.hooks.manylinux:manylinux"
 
 [tool.hatch.build.targets.sdist]
 exclude = ["/.github", "/docs", "/.gitignore"]
+
+[tool.sip.metadata]
+name = "llm-hexapot"
+
+# [tool.sip.bindings.PyQt5]
+# qmake-QT = ["core", "gui", "widgets"]
+
+# [tool.pyqt-builder]
+# qmake-settings = ["core", "gui", "widgets"]
