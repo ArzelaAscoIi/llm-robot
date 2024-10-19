@@ -26,12 +26,13 @@ dependencies = [
   "opencv-python-headless",
   "opencv-contrib-python-headless",
   #"PyQt5==5.15.2", # enable just on RPI
-  "mpu6050-raspberrypi",  # enable just on RPI
+  "mpu6050-raspberrypi", # enable just on RPI
   "rpi_ws281x",
   "RPi.GPIO",
-  "smbus", 
-  "gpiozero", 
-  "lgpio"
+  "smbus",
+  "gpiozero",
+  "lgpio",
+  "fastapi",
 ]
 
 [project.urls]
@@ -53,6 +54,7 @@ dependencies = [
 ]
 [tool.hatch.envs.default.scripts]
 check = "python -m llm_hexapot.check"
+server = "uvicorn llm_hexapot.main:app --host 0.0.0.0 --port 8000 --reload"
 
 [tool.hatch.envs.code-quality]
 dependencies = ["black"]
