@@ -74,6 +74,8 @@ class MoveService:
             str(pitch),  # pitch
             str(roll),  # roll
             "0",  # yaw (we're not changing yaw in this method)
+            "5",  # time (in seconds) to complete the movement
+            "0",  # reserved parameter, set to 0
         ]
         self.control.run(data)
 
