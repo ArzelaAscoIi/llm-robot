@@ -29,7 +29,9 @@ dependencies = [
   "mpu6050-raspberrypi",  # enable just on RPI
   "rpi_ws281x",
   "RPi.GPIO",
-  "smbus"
+  "smbus", 
+  "gpiozero", 
+  "lgpio"
 ]
 
 [project.urls]
