@@ -62,17 +62,19 @@ class MoveService:
             self.control.run(data)
 
     def tilt(self, direction: TiltDirection, angle: int) -> None:
-        tilt_command: Dict[TiltDirection, str] = {
-            TiltDirection.FORWARD: COMMAND.CMD_ATTITUDE,
-            TiltDirection.BACKWARD: COMMAND.CMD_ATTITUDE,
-            TiltDirection.LEFT: COMMAND.CMD_ATTITUDE,
-            TiltDirection.RIGHT: COMMAND.CMD_ATTITUDE,
-        }
+        if direction in [TiltDirection.FORWARD, TiltDirection.BACKWARD]:
+            pitch = angle if direction == TiltDirection.FORWARD else -angle
+            roll = 0
+        else:  # LEFT or RIGHT
+            pitch = 0
+            roll = angle if direction == TiltDirection.LEFT else -angle
 
-        if direction in [TiltDirection.BACKWARD, TiltDirection.RIGHT]:
-            angle = -angle
-
-        data: List[str] = [tilt_command[direction], str(angle)]
+        data: List[str] = [
+            COMMAND.CMD_ATTITUDE,
+            str(pitch),  # pitch
+            str(roll),  # roll
+            "0",  # yaw (we're not changing yaw in this method)
+        ]
         self.control.run(data)
 
     def demonstrate_all_moves(self, iterations_per_move: int = 2, delay_between_moves: float = 1.0) -> None:
