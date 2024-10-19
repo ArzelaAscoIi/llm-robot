@@ -77,9 +77,7 @@ class Server:
                 stream = io.BytesIO()
                 # send jpeg format video stream
                 print("Start transmit ... ")
-                for foo in camera.capture_continuous(
-                    stream, "jpeg", use_video_port=True
-                ):
+                for foo in camera.capture_continuous(stream, "jpeg", use_video_port=True):
                     try:
                         self.connection.flush()
                         stream.seek(0)
@@ -131,14 +129,7 @@ class Server:
                 elif cmd.CMD_POWER in data:
                     try:
                         batteryVoltage = self.adc.batteryPower()
-                        command = (
-                            cmd.CMD_POWER
-                            + "#"
-                            + str(batteryVoltage[0])
-                            + "#"
-                            + str(batteryVoltage[1])
-                            + "\n"
-                        )
+                        command = cmd.CMD_POWER + "#" + str(batteryVoltage[0]) + "#" + str(batteryVoltage[1]) + "\n"
                         # print(command)
                         self.send_data(self.connection1, command)
                         if batteryVoltage[0] < 5.5 or batteryVoltage[1] < 6:
@@ -169,9 +160,7 @@ class Server:
                     command = cmd.CMD_SONIC + "#" + str(self.sonic.getDistance()) + "\n"
                     self.send_data(self.connection1, command)
                 elif cmd.CMD_GET_ANGLES in data:
-                    command = (
-                        cmd.CMD_GET_ANGLES + "#" + str(self.control.getAngles()) + "\n"
-                    )
+                    command = cmd.CMD_GET_ANGLES + "#" + str(self.control.getAngles()) + "\n"
                     self.send_data(self.connection1, command)
                 elif cmd.CMD_HEAD in data:
                     if len(data) == 3:

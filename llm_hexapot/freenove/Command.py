@@ -16,6 +16,6 @@ class COMMAND:
     CMD_ATTACK = "CMD_ATTACK"
     CMD_GET_ANGLES = "CMD_GET_ANGLES"
     CMD_SET_ANGLES = "CMD_SET_ANGLES"
-       
+
     def __init__(self):
         pass

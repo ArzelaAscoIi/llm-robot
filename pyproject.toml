@@ -38,15 +38,19 @@ path = "llm_hexapot/__about__.py"
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
-  "Pillow",
+  #"Pillow",
   "opencv-python-headless",
   "opencv-contrib-python-headless",
   "numpy",
   # "PyQt5==5.15.2",# enable just on RPI
 ]
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-check = "python -m llm_hexapot.check {args}"
+check = "python -m llm_hexapot.check"
+
+[tool.hatch.envs.code-quality]
+dependencies = ["black"]
+[tool.hatch.envs.code-quality.scripts]
+format = "black ."
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.12"]
@@ -84,3 +88,6 @@ name = "llm-hexapot"
 
 # [tool.pyqt-builder]
 # qmake-settings = ["core", "gui", "widgets"]
+
+[tool.black]
+line-length = 120
