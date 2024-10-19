@@ -1,4 +1,6 @@
-from llm_hexapot.service.move_service import MoveService, MoveType, GaitMode, ActionMode
+from typing import Tuple
+
+from llm_hexapot.service.move_service import MoveService, MoveType
 from llm_hexapot.service.led_service import LedService, LedMode
 from llm_hexapot.service.buzzer_service import BuzzerService
 from llm_hexapot.service.battery_service import BatteryService
@@ -7,19 +9,19 @@ from llm_hexapot.service.servo_service import ServoService
 
 
 class HexapodController:
-    def __init__(self):
-        self.move_service = MoveService()
-        self.led_service = LedService()
-        self.buzzer_service = BuzzerService()
-        self.battery_service = BatteryService()
-        self.ultrasonic_service = UltrasonicService()
-        self.servo_service = ServoService()
+    def __init__(self) -> None:
+        self.move_service: MoveService = MoveService()
+        self.led_service: LedService = LedService()
+        self.buzzer_service: BuzzerService = BuzzerService()
+        self.battery_service: BatteryService = BatteryService()
+        self.ultrasonic_service: UltrasonicService = UltrasonicService()
+        self.servo_service: ServoService = ServoService()
 
-    def run_demo(self):
+    def run_demo(self) -> None:
         print("Starting Hexapod Demo")
 
         # Check battery
-        voltage = self.battery_service.get_voltage()
+        voltage: Tuple[float, float] = self.battery_service.get_voltage()
         print(f"Battery voltage: {voltage[0]}V, {voltage[1]}V")
         if self.battery_service.is_low_battery():
             print("Warning: Low battery!")
@@ -70,5 +72,5 @@ class HexapodController:
 
 
 if __name__ == "__main__":
-    controller = HexapodController()
+    controller: HexapodController = HexapodController()
     controller.run_demo()
