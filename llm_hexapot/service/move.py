@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, Dict
 from llm_hexapot.freenove.Control import Control
 from llm_hexapot.freenove.Command import COMMAND
+import time
 
 
 class GaitMode(Enum):
@@ -73,3 +74,42 @@ class MoveService:
 
         data: List[str] = [tilt_command[direction], str(angle)]
         self.control.run(data)
+
+    def demonstrate_all_moves(self, iterations_per_move: int = 2, delay_between_moves: float = 1.0) -> None:
+        """
+        Demonstrates all available move types.
+
+        :param iterations_per_move: Number of iterations for each move type
+        :param delay_between_moves: Delay in seconds between different move types
+        """
+        original_move_type = self.move_type
+        original_speed = self.speed
+
+        # Temporarily increase speed for more noticeable movements
+        self.speed = 50
+
+        for move_type in MoveType:
+            print(f"Demonstrating {move_type.value}")
+            self.move_type = move_type
+            self.move(iterations=iterations_per_move)
+            time.sleep(delay_between_moves)
+
+        # Demonstrate tilting
+        for tilt_direction in TiltDirection:
+            print(f"Demonstrating tilt {tilt_direction.value}")
+            self.tilt(direction=tilt_direction, angle=20)
+            time.sleep(delay_between_moves)
+            # Return to neutral position
+            self.tilt(direction=tilt_direction, angle=0)
+            time.sleep(delay_between_moves)
+
+        # Reset to original settings
+        self.move_type = original_move_type
+        self.speed = original_speed
+        print("Demonstration completed")
+
+
+# Usage example:
+if __name__ == "__main__":
+    move_service = MoveService()
+    move_service.demonstrate_all_moves()
