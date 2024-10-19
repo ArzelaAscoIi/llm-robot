@@ -1,3 +1,4 @@
+import time
 from typing import Tuple
 
 from llm_hexapot.service.move_service import MoveService, MoveType
@@ -44,6 +45,8 @@ class HexapodController:
         # Turn camera
         print("Moving camera")
         self.servo_service.set_camera_position(90, 45)
+        time.sleep(1)
+        self.servo_service.set_camera_position(70, 30)
 
         # Move backward
         print("Moving backward")
