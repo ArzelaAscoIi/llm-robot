@@ -39,7 +39,7 @@ def test_Led():
             print("\nEnd of program")
 
 
-from Ultrasonic import *
+from llm_hexapot.freenove.Ultrasonic import *
 
 ultrasonic = Ultrasonic()
 
@@ -54,7 +54,7 @@ def test_Ultrasonic():
         print("\nEnd of program")
 
 
-from Servo import *
+from llm_hexapot.freenove.Servo import *
 
 servo = Servo()
 
@@ -90,7 +90,7 @@ def test_Servo():
         print("\nEnd of program")
 
 
-from ADC import *
+from llm_hexapot.freenove.ADC import *
 
 adc = ADC()
 
@@ -105,7 +105,7 @@ def test_Adc():
         print("\nEnd of program")
 
 
-from Buzzer import *
+from llm_hexapot.freenove.Buzzer import *
 
 buzzer = Buzzer()
 
@@ -127,7 +127,7 @@ def test_Buzzer():
 
 
 import threading
-from Control import *
+from llm_hexapot.freenove.Control import *
 
 
 # Main program logic follows:
