@@ -27,10 +27,13 @@ class LedService:
 
     def apply(self):
         # Convert the LedService parameters to the format expected by the Led class
+        mode_value = 0 if self.mode == LedMode.SOLID else 1 if self.mode == LedMode.BLINK else 2
         data: List[str] = [
             "CMD_LED",
-            self.mode.value,
-            f"{self.color[0]},{self.color[1]},{self.color[2]}",
+            str(mode_value),
+            str(self.color[0]),
+            str(self.color[1]),
+            str(self.color[2]),
             str(self.brightness),
         ]
         self.led.light(data)
