@@ -63,6 +63,7 @@ async def set_camera_position(request: CameraPositionRequest):
 
 @app.post("/move")
 async def move_robot(request: MoveRequest):
+    move_service.move_type = request.move_type
     move_service.move(request.iterations)
     return {"message": f"Robot moved {request.move_type.value} for {request.iterations} iterations"}
 
