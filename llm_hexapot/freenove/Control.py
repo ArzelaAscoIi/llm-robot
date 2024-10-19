@@ -4,12 +4,13 @@ import time
 import math
 import smbus
 import copy
-from IMU import *
-from PID import *
 import threading
-from Servo import *
 import numpy as np
 import RPi.GPIO as GPIO
+
+from IMU import IMU
+from PID import Incremental_PID
+from Servo import Servo
 from Command import COMMAND as cmd
 
 
