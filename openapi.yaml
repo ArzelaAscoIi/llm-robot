@@ -7,7 +7,7 @@ info:
     servo motors, movement, LED lights, camera positioning, buzzer, and more.
   version: 1.0.0
 servers:
-  - url: 'https://5567-2a02-908-5b0-7f40-00-96dd.ngrok-free.app'
+  - url: "https://3539-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
     description: Production server
 paths:
   /servo/angle:
@@ -58,20 +58,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ServoAngleRequest'
+              $ref: "#/components/schemas/ServoAngleRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
   /servo/camera:
     post:
       summary: Set Camera Position
@@ -111,20 +111,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CameraPositionRequest'
+              $ref: "#/components/schemas/CameraPositionRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
   /move:
     post:
       summary: Move Robot
@@ -168,20 +168,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MoveRequest'
+              $ref: "#/components/schemas/MoveRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
   /led:
     post:
       summary: Set Led
@@ -225,20 +225,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LedRequest'
+              $ref: "#/components/schemas/LedRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
   /buzzer:
     post:
       summary: Set Buzzer
@@ -273,20 +273,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BuzzerRequest'
+              $ref: "#/components/schemas/BuzzerRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+                $ref: "#/components/schemas/HTTPValidationError"
 components:
   schemas:
     BuzzerRequest:
@@ -308,22 +308,22 @@ components:
           description: >-
             The horizontal position of the camera, typically in the range of
             0-180 degrees
-        'y':
+        "y":
           type: integer
-          title: 'Y'
+          title: "Y"
           description: >-
             The vertical position of the camera, typically in the range of 0-180
             degrees
       type: object
       required:
         - x
-        - 'y'
+        - "y"
       title: CameraPositionRequest
     HTTPValidationError:
       properties:
         detail:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: "#/components/schemas/ValidationError"
           type: array
           title: Detail
       type: object
@@ -338,8 +338,8 @@ components:
     LedRequest:
       properties:
         mode:
-          $ref: '#/components/schemas/LedMode'
-          description: 'The lighting mode to set (e.g., STATIC, BREATHING, RAINBOW)'
+          $ref: "#/components/schemas/LedMode"
+          description: "The lighting mode to set (e.g., STATIC, BREATHING, RAINBOW)"
         r:
           type: integer
           maximum: 255
@@ -375,7 +375,7 @@ components:
     MoveRequest:
       properties:
         move_type:
-          $ref: '#/components/schemas/MoveType'
+          $ref: "#/components/schemas/MoveType"
           description: >-
             The type of movement to perform (e.g., FORWARD, BACKWARD, LEFT,
             RIGHT, UP, DOWN)
