@@ -7,7 +7,7 @@ info:
     servo motors, movement, LED lights, camera positioning, buzzer, and more.
   version: 1.0.0
 servers:
-  - url: "https://3539-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
+  - url: "https://ce48-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
     description: Production server
 paths:
   /servo/angle:
