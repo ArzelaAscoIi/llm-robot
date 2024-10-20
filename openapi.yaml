@@ -1,0 +1,436 @@
+openapi: 3.1.0
+info:
+  title: Hexapod API
+  description: >-
+    API for controlling the Hexapod robot. This specification outlines a set of
+    functions to manipulate various aspects of a six-legged robot, including
+    servo motors, movement, LED lights, camera positioning, buzzer, and more.
+  version: 1.0.0
+servers:
+  - url: 'https://5567-2a02-908-5b0-7f40-00-96dd.ngrok-free.app'
+    description: Production server
+paths:
+  /servo/angle:
+    post:
+      summary: Set Servo Angle
+      description: >-
+        Set the angle of a specific servo motor.
+
+
+        This endpoint allows you to control individual servo motors on the
+        hexapod robot.
+
+        You can specify the servo ID and the desired angle to position the
+        servo.
+
+
+        Parameters:
+
+        - servo_id (int): The unique identifier of the servo motor (1-18).
+
+        - angle (int): The desired angle for the servo, typically in the range
+        of 0-180 degrees.
+
+
+        The servo_id corresponds to the following:
+
+        - 1-6: Coxa servos (hip joints)
+
+        - 7-12: Femur servos (thigh joints)
+
+        - 13-18: Tibia servos (knee joints)
+
+
+        This function calls the ServoService to apply the requested angle to the
+        specified servo.
+
+
+        Returns:
+
+        - A JSON object with a success message.
+
+
+        Raises:
+
+        - HTTPException: If the servo_id or angle is out of the valid range.
+      operationId: set_servo_angle_servo_angle_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServoAngleRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /servo/camera:
+    post:
+      summary: Set Camera Position
+      description: >-
+        Set the position of the camera mount servos.
+
+
+        This endpoint controls the two servos responsible for the camera's pan
+        and tilt movements.
+
+        You can adjust the camera's horizontal (x) and vertical (y) positions.
+
+
+        Parameters:
+
+        - x (int): The horizontal position of the camera, typically in the range
+        of 0-180 degrees.
+
+        - y (int): The vertical position of the camera, typically in the range
+        of 0-180 degrees.
+
+
+        This function calls the ServoService to apply the requested positions to
+        the camera mount servos.
+
+
+        Returns:
+
+        - A JSON object with a success message.
+
+
+        Raises:
+
+        - HTTPException: If the x or y values are out of the valid range.
+      operationId: set_camera_position_servo_camera_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CameraPositionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /move:
+    post:
+      summary: Move Robot
+      description: >-
+        Command the hexapod robot to perform a specific movement.
+
+
+        This endpoint allows you to control the robot's movement by specifying a
+        move type and the number of iterations.
+
+
+        Parameters:
+
+        - move_type (MoveType): The type of movement to perform. Options
+        include:
+            - FORWARD: Move the robot forward
+            - BACKWARD: Move the robot backward
+            - LEFT: Turn the robot left
+            - RIGHT: Turn the robot right
+            - UP: Raise the robot's body
+            - DOWN: Lower the robot's body
+        - iterations (int): The number of times to repeat the movement (default
+        is 1)
+
+
+        This function sets the move type on the MoveService and then calls the
+        move method with the specified iterations.
+
+
+        Returns:
+
+        - A JSON object with a message describing the executed movement.
+
+
+        Raises:
+
+        - HTTPException: If an invalid move type is provided or if iterations is
+        less than 1.
+      operationId: move_robot_move_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /led:
+    post:
+      summary: Set Led
+      description: >-
+        Control the LED lights on the hexapod robot.
+
+
+        This endpoint allows you to set the LED mode, color, and brightness of
+        the robot's LED lights.
+
+
+        Parameters:
+
+        - mode (LedMode): The lighting mode to set. Options include:
+            - STATIC: Constant color
+            - BREATHING: Pulsing effect
+            - RAINBOW: Cycling through colors
+        - r (int): Red color component (0-255)
+
+        - g (int): Green color component (0-255)
+
+        - b (int): Blue color component (0-255)
+
+        - brightness (int): Overall brightness of the LEDs (0-100)
+
+
+        This function calls the LedService to set the mode, color, and
+        brightness, then applies the changes.
+
+
+        Returns:
+
+        - A JSON object with a success message.
+
+
+        Raises:
+
+        - HTTPException: If invalid color values or brightness are provided.
+      operationId: set_led_led_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LedRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /buzzer:
+    post:
+      summary: Set Buzzer
+      description: >-
+        Activate the buzzer on the hexapod robot.
+
+
+        This endpoint allows you to make the robot's buzzer beep for a specified
+        duration.
+
+
+        Parameters:
+
+        - duration_ms (int): The duration of the beep in milliseconds.
+
+
+        This function calls the BuzzerService to activate the buzzer for the
+        specified duration.
+
+
+        Returns:
+
+        - A JSON object with a success message.
+
+
+        Raises:
+
+        - HTTPException: If the duration is negative or exceeds a maximum
+        allowed value.
+      operationId: set_buzzer_buzzer_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuzzerRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BuzzerRequest:
+      properties:
+        duration_ms:
+          type: integer
+          exclusiveMinimum: 0
+          title: Duration Ms
+          description: The duration of the beep in milliseconds
+      type: object
+      required:
+        - duration_ms
+      title: BuzzerRequest
+    CameraPositionRequest:
+      properties:
+        x:
+          type: integer
+          title: X
+          description: >-
+            The horizontal position of the camera, typically in the range of
+            0-180 degrees
+        'y':
+          type: integer
+          title: 'Y'
+          description: >-
+            The vertical position of the camera, typically in the range of 0-180
+            degrees
+      type: object
+      required:
+        - x
+        - 'y'
+      title: CameraPositionRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LedMode:
+      type: string
+      enum:
+        - solid
+        - blink
+        - breathe
+      title: LedMode
+    LedRequest:
+      properties:
+        mode:
+          $ref: '#/components/schemas/LedMode'
+          description: 'The lighting mode to set (e.g., STATIC, BREATHING, RAINBOW)'
+        r:
+          type: integer
+          maximum: 255
+          minimum: 0
+          title: R
+          description: Red color component (0-255)
+        g:
+          type: integer
+          maximum: 255
+          minimum: 0
+          title: G
+          description: Green color component (0-255)
+        b:
+          type: integer
+          maximum: 255
+          minimum: 0
+          title: B
+          description: Blue color component (0-255)
+        brightness:
+          type: integer
+          maximum: 100
+          minimum: 0
+          title: Brightness
+          description: Overall brightness of the LEDs (0-100)
+      type: object
+      required:
+        - mode
+        - r
+        - g
+        - b
+        - brightness
+      title: LedRequest
+    MoveRequest:
+      properties:
+        move_type:
+          $ref: '#/components/schemas/MoveType'
+          description: >-
+            The type of movement to perform (e.g., FORWARD, BACKWARD, LEFT,
+            RIGHT, UP, DOWN)
+        iterations:
+          type: integer
+          title: Iterations
+          description: The number of times to repeat the movement (default is 1)
+          default: 1
+      type: object
+      required:
+        - move_type
+      title: MoveRequest
+    MoveType:
+      type: string
+      enum:
+        - forward
+        - backward
+        - left
+        - right
+      title: MoveType
+    ServoAngleRequest:
+      properties:
+        servo_id:
+          type: integer
+          title: Servo Id
+          description: The unique identifier of the servo motor (1-18)
+        angle:
+          type: integer
+          title: Angle
+          description: >-
+            The desired angle for the servo, typically in the range of 0-180
+            degrees
+      type: object
+      required:
+        - servo_id
+        - angle
+      title: ServoAngleRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
