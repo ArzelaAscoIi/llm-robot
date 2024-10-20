@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from enum import Enum
 
+# Define base URL
+BASE_URL = "https://5567-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
+
 from llm_hexapot.service.servo_service import ServoService
 from llm_hexapot.service.move_service import MoveService, MoveType, GaitMode, ActionMode
 from llm_hexapot.service.led_service import LedService, LedMode
@@ -9,7 +12,14 @@ from llm_hexapot.service.ultrasonic_service import UltrasonicService
 from llm_hexapot.service.buzzer_service import BuzzerService
 from llm_hexapot.service.battery_service import BatteryService
 
-app = FastAPI()
+app = FastAPI(
+    title="Hexapod API",
+    description="API for controlling the Hexapod robot. This specification outlines a set of functions to manipulate various aspects of a six-legged robot, including servo motors, movement, LED lights, camera positioning, buzzer, and more.",
+    version="1.0.0",
+    servers=[
+        {"url": BASE_URL, "description": "Production server"},
+    ],
+)
 
 # Initialize services
 servo_service = ServoService()
