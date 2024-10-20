@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from enum import Enum
 
 # Define base URL
-BASE_URL = "https://5567-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
+BASE_URL = "https://59f1-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
 
 from llm_hexapot.service.servo_service import ServoService
 from llm_hexapot.service.move_service import MoveService, MoveType, GaitMode, ActionMode
