@@ -1,6 +1,10 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Dict, Any
+import tempfile
+import os
 
 # Define base URL
 BASE_URL = "https://59f1-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
@@ -11,6 +15,7 @@ from llm_hexapot.service.led_service import LedService, LedMode
 from llm_hexapot.service.ultrasonic_service import UltrasonicService
 from llm_hexapot.service.buzzer_service import BuzzerService
 from llm_hexapot.service.battery_service import BatteryService
+from llm_hexapot.service.camera_service import CameraService
 
 app = FastAPI(
     title="Hexapod API",
@@ -28,6 +33,7 @@ led_service = LedService()
 ultrasonic_service = UltrasonicService()
 buzzer_service = BuzzerService()
 battery_service = BatteryService()
+camera_service = CameraService()
 
 
 # Define request models
@@ -60,9 +66,18 @@ class BuzzerRequest(BaseModel):
     duration_ms: int = Field(..., gt=0, description="The duration of the beep in milliseconds")
 
 
+# Define response models
+class MessageResponse(BaseModel):
+    message: str
+
+
+class MoveResponse(BaseModel):
+    message: str
+
+
 # Define endpoints
-@app.post("/servo/angle")
-async def set_servo_angle(request: ServoAngleRequest):
+@app.post("/servo/angle", response_model=MessageResponse)
+async def set_servo_angle(request: ServoAngleRequest) -> Dict[str, Any]:
     """
     Set the angle of a specific servo motor.
 
@@ -90,8 +105,8 @@ async def set_servo_angle(request: ServoAngleRequest):
     return {"message": "Servo angle set successfully"}
 
 
-@app.post("/servo/camera")
-async def set_camera_position(request: CameraPositionRequest):
+@app.post("/servo/camera", response_model=MessageResponse)
+async def set_camera_position(request: CameraPositionRequest) -> Dict[str, Any]:
     """
     Set the position of the camera mount servos.
 
@@ -114,8 +129,8 @@ async def set_camera_position(request: CameraPositionRequest):
     return {"message": "Camera position set successfully"}
 
 
-@app.post("/move")
-async def move_robot(request: MoveRequest):
+@app.post("/move", response_model=MoveResponse)
+async def move_robot(request: MoveRequest) -> Dict[str, Any]:
     """
     Command the hexapod robot to perform a specific movement.
 
@@ -144,8 +159,8 @@ async def move_robot(request: MoveRequest):
     return {"message": f"Robot moved {request.move_type.value} for {request.iterations} iterations"}
 
 
-@app.post("/led")
-async def set_led(request: LedRequest):
+@app.post("/led", response_model=MessageResponse)
+async def set_led(request: LedRequest) -> Dict[str, Any]:
     """
     Control the LED lights on the hexapod robot.
 
@@ -176,8 +191,8 @@ async def set_led(request: LedRequest):
     return {"message": "LED set successfully"}
 
 
-@app.post("/buzzer")
-async def set_buzzer(request: BuzzerRequest):
+@app.post("/buzzer", response_model=MessageResponse)
+async def set_buzzer(request: BuzzerRequest) -> Dict[str, Any]:
     """
     Activate the buzzer on the hexapod robot.
 
@@ -196,3 +211,28 @@ async def set_buzzer(request: BuzzerRequest):
     """
     buzzer_service.beep(request.duration_ms)
     return {"message": "Buzzer set successfully"}
+
+
+@app.get("/camera/photo", response_class=FileResponse)
+async def take_photo():
+    """
+    Take a photo using the hexapod's camera and return it.
+
+    This endpoint triggers the camera to capture a photo and returns the image file.
+
+    Returns:
+    - A JPEG image file of the captured photo.
+
+    Raises:
+    - HTTPException: If there's an error capturing or saving the photo.
+    """
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
+            photo_path = temp_file.name
+
+            camera_service.capture_photo(photo_path)
+            return FileResponse(photo_path, media_type="image/jpeg", filename="hexapod_photo.jpg")
+    finally:
+        # Clean up the temporary file
+        if "photo_path" in locals():
+            os.unlink(photo_path)
