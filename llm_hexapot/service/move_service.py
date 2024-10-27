@@ -20,6 +20,8 @@ class MoveType(Enum):
     BACKWARD = "backward"
     LEFT = "left"
     RIGHT = "right"
+    TURN_LEFT = "turn_left"
+    TURN_RIGHT = "turn_right"
 
 
 class TiltDirection(Enum):
@@ -56,6 +58,30 @@ class MoveService:
                 self.gait_mode.value,
                 str(x),
                 str(y),
+                str(self.delay),
+                self.action_mode.value,
+            ]
+            self.control.run(data)
+
+    def turn(self, direction: MoveType, iterations: int = 1) -> None:
+        """Execute a turning movement in the specified direction.
+
+        Args:
+            direction: MoveType.TURN_LEFT or MoveType.TURN_RIGHT
+            iterations: Number of movement cycles
+        """
+        if direction not in [MoveType.TURN_LEFT, MoveType.TURN_RIGHT]:
+            raise ValueError("Direction must be TURN_LEFT or TURN_RIGHT")
+
+        self.move_type = direction
+        x = self.speed if direction == MoveType.TURN_RIGHT else -self.speed
+
+        for _ in range(iterations):
+            data: List[str] = [
+                COMMAND.CMD_MOVE,
+                self.gait_mode.value,
+                str(x),
+                "0",  # y is always 0 for turning
                 str(self.delay),
                 self.action_mode.value,
             ]

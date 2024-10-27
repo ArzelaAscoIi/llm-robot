@@ -66,6 +66,11 @@ class BuzzerRequest(BaseModel):
     duration_ms: int = Field(..., gt=0, description="The duration of the beep in milliseconds")
 
 
+class TurnRequest(BaseModel):
+    direction: MoveType = Field(..., description="The direction to turn (TURN_LEFT or TURN_RIGHT)")
+    iterations: int = Field(1, description="The number of times to repeat the turn (default is 1)")
+
+
 # Define response models
 class MessageResponse(BaseModel):
     message: str
@@ -73,36 +78,6 @@ class MessageResponse(BaseModel):
 
 class MoveResponse(BaseModel):
     message: str
-
-
-# Define endpoints
-@app.post("/servo/angle", response_model=MessageResponse)
-async def set_servo_angle(request: ServoAngleRequest) -> Dict[str, Any]:
-    """
-    Set the angle of a specific servo motor.
-
-    This endpoint allows you to control individual servo motors on the hexapod robot.
-    You can specify the servo ID and the desired angle to position the servo.
-
-    Parameters:
-    - servo_id (int): The unique identifier of the servo motor (1-18).
-    - angle (int): The desired angle for the servo, typically in the range of 0-180 degrees.
-
-    The servo_id corresponds to the following:
-    - 1-6: Coxa servos (hip joints)
-    - 7-12: Femur servos (thigh joints)
-    - 13-18: Tibia servos (knee joints)
-
-    This function calls the ServoService to apply the requested angle to the specified servo.
-
-    Returns:
-    - A JSON object with a success message.
-
-    Raises:
-    - HTTPException: If the servo_id or angle is out of the valid range.
-    """
-    servo_service.set_angle(request.servo_id, request.angle)
-    return {"message": "Servo angle set successfully"}
 
 
 @app.post("/servo/camera", response_model=MessageResponse)
@@ -236,3 +211,31 @@ async def take_photo():
         # Clean up the temporary file
         if "photo_path" in locals():
             os.unlink(photo_path)
+
+
+@app.post("/turn", response_model=MoveResponse)
+async def turn_robot(request: TurnRequest) -> Dict[str, Any]:
+    """
+    Command the hexapod robot to turn left or right.
+
+    This endpoint allows you to control the robot's turning movement by specifying
+    the direction and number of iterations.
+
+    Parameters:
+    - direction (MoveType): The direction to turn. Must be either:
+        - TURN_LEFT: Turn the robot left
+        - TURN_RIGHT: Turn the robot right
+    - iterations (int): The number of times to repeat the turn (default is 1)
+
+    Returns:
+    - A JSON object with a message describing the executed turn.
+
+    Raises:
+    - HTTPException (400): If the direction is not TURN_LEFT or TURN_RIGHT
+    - HTTPException: If iterations is less than 1.
+    """
+    if request.direction not in [MoveType.TURN_LEFT, MoveType.TURN_RIGHT]:
+        raise HTTPException(status_code=400, detail="Direction must be TURN_LEFT or TURN_RIGHT")
+
+    move_service.turn(request.direction, request.iterations)
+    return {"message": f"Robot turned {request.direction.value} for {request.iterations} iterations"}
