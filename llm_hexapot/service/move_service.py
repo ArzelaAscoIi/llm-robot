@@ -1,8 +1,7 @@
 from enum import Enum
-from typing import List, Dict
+from typing import List
 from llm_hexapot.freenove.Control import Control
 from llm_hexapot.freenove.Command import COMMAND
-import time
 
 
 class GaitMode(Enum):

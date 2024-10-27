@@ -1,4 +1,3 @@
-import smbus
 import time
 from llm_hexapot.freenove.ADCDevice import *
 
@@ -25,7 +24,7 @@ class ADC:
         return self.adc.analogRead(chn)
 
     def batteryPower(self):
-        if self.adcFlag == True:
+        if self.adcFlag is True:
             val0 = self.batteryValue(0)
             val1 = self.batteryValue(4)
         else:

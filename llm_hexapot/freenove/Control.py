@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
 import math
-import smbus
 import copy
 from llm_hexapot.freenove.IMU import *
 from llm_hexapot.freenove.PID import *
@@ -342,7 +341,7 @@ class Control:
 
         rot_mat = rotx * roty * rotz
 
-        body_struc = np.mat([[55, 76, 0], [85, 0, 0], [55, -76, 0], [-55, -76, 0], [-85, 0, 0], [-55, 76, 0]]).T
+        np.mat([[55, 76, 0], [85, 0, 0], [55, -76, 0], [-55, -76, 0], [-85, 0, 0], [-55, 76, 0]]).T
 
         footpoint_struc = np.mat(
             [[137.1, 189.4, 0], [225, 0, 0], [137.1, -189.4, 0], [-137.1, -189.4, 0], [-225, 0, 0], [-137.1, 189.4, 0]]
@@ -358,9 +357,6 @@ class Control:
         return ab
 
     def imu6050(self):
-        old_r = 0
-        old_p = 0
-        i = 0
         point = self.postureBalance(0, 0, 0)
         self.coordinateTransformation(point)
         self.setLegAngle()

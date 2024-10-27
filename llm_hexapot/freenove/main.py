@@ -2,7 +2,6 @@
 import os
 import sys, getopt
 from ui_server import Ui_server
-from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -84,7 +83,7 @@ class MyWindow(QMainWindow, Ui_server):
 if __name__ == "__main__":
     try:
         myshow = MyWindow()
-        if myshow.user_ui == True:
+        if myshow.user_ui is True:
             myshow.show()
             sys.exit(myshow.app.exec_())
         else:

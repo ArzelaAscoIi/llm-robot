@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from enum import Enum
 from typing import Dict, Any
 import tempfile
 import os
@@ -10,7 +9,7 @@ import os
 BASE_URL = "https://59f1-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
 
 from llm_hexapot.service.servo_service import ServoService
-from llm_hexapot.service.move_service import MoveService, MoveType, GaitMode, ActionMode
+from llm_hexapot.service.move_service import MoveService, MoveType
 from llm_hexapot.service.led_service import LedService, LedMode
 from llm_hexapot.service.ultrasonic_service import UltrasonicService
 from llm_hexapot.service.buzzer_service import BuzzerService

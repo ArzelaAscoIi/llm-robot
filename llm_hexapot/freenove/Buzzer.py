@@ -1,6 +1,5 @@
 import time
 from gpiozero import Buzzer
-from llm_hexapot.freenove.Command import COMMAND as cmd
 
 buzzer = Buzzer(17)
 

@@ -126,7 +126,6 @@ def test_Buzzer():
         print("\nEnd of program")
 
 
-import threading
 from llm_hexapot.freenove.Control import *
 
 

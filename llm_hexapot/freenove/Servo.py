@@ -1,8 +1,6 @@
 # coding:utf-8
 from llm_hexapot.freenove.PCA9685 import PCA9685
 import time
-import math
-import smbus
 
 
 def mapNum(value, fromLow, fromHigh, toLow, toHigh):

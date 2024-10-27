@@ -1,4 +1,3 @@
-import time
 from gpiozero import DistanceSensor
 
 trigger_pin = 27

@@ -4,7 +4,7 @@ import time
 import fcntl
 import socket
 import struct
-from picamera2 import Picamera2, Preview
+from picamera2 import Picamera2
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
 from picamera2.encoders import Quality
@@ -107,7 +107,7 @@ class Server:
                 lengthBin = struct.pack("<I", lenFrame)
                 self.connection.write(lengthBin)
                 self.connection.write(frame)
-            except Exception as e:
+            except Exception:
                 camera.stop_recording()
                 camera.close()
                 print("End transmit ... ")
@@ -140,7 +140,7 @@ class Server:
                     cmdArray == cmdArray[:-1]
             for oneCmd in cmdArray:
                 data = oneCmd.split("#")
-                if data == None or data[0] == "":
+                if data is None or data[0] == "":
                     continue
                 elif cmd.CMD_BUZZER in data:
                     self.buzzer.run(data[1])
@@ -191,7 +191,7 @@ class Server:
                         self.servo.setServoAngle(1, y)
                 elif cmd.CMD_RELAX in data:
                     # print(data)
-                    if self.control.relax_flag == False:
+                    if self.control.relax_flag is False:
                         self.control.relax(True)
                         self.control.relax_flag = True
                     else:

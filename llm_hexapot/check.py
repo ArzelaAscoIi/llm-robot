@@ -132,7 +132,6 @@ def test_Ultrasonic():
 
 def main():
     print("Program is starting ... ")
-    import sys
 
     # test_Led()
     # test_Buzzer()
