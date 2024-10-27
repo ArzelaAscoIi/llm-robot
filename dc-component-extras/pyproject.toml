@@ -38,15 +38,15 @@ tests = "pytest -vv tests"
 
 [tool.hatch.envs.dc]
 detached = true
-
+# api_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMjc5YjBiYi03YTk4LTQ4MDctOTVkYy00OGI0Mzk0NTYxNjR8NjI3YTkwNTM0YTBhNTEwMDZlZjY5Njc2IiwiZXhwIjoxNzMwMjQyODAwLCJhdWQiOlsiaHR0cHM6Ly9hcGkuY2xvdWQuZGVlcHNldC5haSJdfQ.VQet3wOygRidbm8nEXdqjqO6B6zArXDgD1C54GEatxc
 [tool.hatch.envs.dc.scripts]
 build = "mkdir -p dist && zip -x dist/ dist/* -r dist/custom_component.zip ./*"
-push = "curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
-build-and-push = "mkdir -p dist && zip -x dist/ dist/* -r dist/custom_component.zip ./* && curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
-list = "curl --request GET --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\""
+push = "curl --request POST --url https://api.cloud.deepset.ai/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
+build-and-push = "mkdir -p dist && zip -x dist/ dist/* -r dist/custom_component.zip ./* && curl --request POST --url https://api.cloud.deepset.ai/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
+list = "curl --request GET --url https://api.cloud.deepset.ai/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\""
 build-windows = "powershell -Command \"& {{ if (-Not (Test-Path dist)) {{mkdir dist}}; if (Test-Path dist/custom_component.zip) {{ Remove-Item dist/custom_component.zip }}; Get-ChildItem -Path . | Where-Object {{ $_.FullName -notlike '*\\dist*' }} | Compress-Archive -DestinationPath dist/custom_component.zip -Update }}"
-push-windows = "curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\" --form \"file=@dist/custom_component.zip;type=application/zip\""
-list-windows = "curl --request GET --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\""
+push-windows = "curl --request POST --url https://api.cloud.deepset.ai/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\" --form \"file=@dist/custom_component.zip;type=application/zip\""
+list-windows = "curl --request GET --url https://api.cloud.deepset.ai/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\""
 
 [tool.hatch.envs.code-quality]
 python = "3.11"
