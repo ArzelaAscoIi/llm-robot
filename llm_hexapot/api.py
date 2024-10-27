@@ -6,7 +6,8 @@ import tempfile
 import os
 
 # Define base URL
-BASE_URL = "https://59f1-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
+from fastapi.openapi.utils import get_openapi
+import yaml
 
 from llm_hexapot.service.servo_service import ServoService
 from llm_hexapot.service.move_service import MoveService, MoveType
@@ -16,6 +17,7 @@ from llm_hexapot.service.buzzer_service import BuzzerService
 from llm_hexapot.service.battery_service import BatteryService
 from llm_hexapot.service.camera_service import CameraService
 
+BASE_URL = "https://59f1-2a02-908-5b0-7f40-00-96dd.ngrok-free.app"
 app = FastAPI(
     title="Hexapod API",
     description="API for controlling the Hexapod robot. This specification outlines a set of functions to manipulate various aspects of a six-legged robot, including servo motors, movement, LED lights, camera positioning, buzzer, and more.",
@@ -81,6 +83,19 @@ class MoveResponse(BaseModel):
 
 class DistanceResponse(BaseModel):
     distance: float = Field(..., description="The measured distance in centimeters")
+
+
+# Endpoint to expose OpenAPI specs as YAML
+@app.get("/openapi-specs", response_class=PlainTextResponse)
+def get_openapi_yaml():
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+    yaml_schema = yaml.dump(openapi_schema, sort_keys=False)
+    return yaml_schema
 
 
 @app.post("/servo/camera", response_model=MessageResponse)

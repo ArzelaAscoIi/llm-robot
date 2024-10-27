@@ -1,5 +1,3 @@
-
-
 class Kalman_filter:
     def __init__(self, Q, R):
         self.Q = Q
