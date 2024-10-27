@@ -1,4 +1,3 @@
-
 # from llm_hexapot.freenove.test.ultrasonic import test_Ultrasonic
 # from llm_hexapot.freenove.test.servo import test_Servo
 # from llm_hexapot.freenove.test.adc import test_Adc
@@ -44,6 +43,7 @@ def test_Led():
         except KeyboardInterrupt:
             print("\nEnd of program")
 
+
 from llm_hexapot.freenove.Buzzer import *
 
 buzzer = Buzzer()
@@ -64,6 +64,7 @@ def test_Buzzer():
         buzzer.run("0")
         print("\nEnd of program")
 
+
 from llm_hexapot.freenove.ADC import *
 
 adc = ADC()
@@ -78,9 +79,12 @@ def test_Adc():
     except KeyboardInterrupt:
         print("\nEnd of program")
 
+
 from llm_hexapot.freenove.Servo import *
 
 servo = Servo()
+
+
 def test_Servo():
     try:
         for i in range(50):
@@ -130,9 +134,9 @@ def main():
     print("Program is starting ... ")
     import sys
 
-    #test_Led()
-    #test_Buzzer()
-    #test_Adc()
+    # test_Led()
+    # test_Buzzer()
+    # test_Adc()
     test_Servo()
     # test_Ultrasonic()
 

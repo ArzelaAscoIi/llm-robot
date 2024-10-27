@@ -80,6 +80,10 @@ class MoveResponse(BaseModel):
     message: str
 
 
+class DistanceResponse(BaseModel):
+    distance: float = Field(..., description="The measured distance in centimeters")
+
+
 @app.post("/servo/camera", response_model=MessageResponse)
 async def set_camera_position(request: CameraPositionRequest) -> Dict[str, Any]:
     """
@@ -132,6 +136,34 @@ async def move_robot(request: MoveRequest) -> Dict[str, Any]:
     move_service.move_type = request.move_type
     move_service.move(request.iterations)
     return {"message": f"Robot moved {request.move_type.value} for {request.iterations} iterations"}
+
+
+@app.post("/turn", response_model=MoveResponse)
+async def turn_robot(request: TurnRequest) -> Dict[str, Any]:
+    """
+    Command the hexapod robot to turn left or right.
+
+    This endpoint allows you to control the robot's turning movement by specifying
+    the direction and number of iterations.
+
+    Parameters:
+    - direction (MoveType): The direction to turn. Must be either:
+        - TURN_LEFT: Turn the robot left
+        - TURN_RIGHT: Turn the robot right
+    - iterations (int): The number of times to repeat the turn (default is 1)
+
+    Returns:
+    - A JSON object with a message describing the executed turn.
+
+    Raises:
+    - HTTPException (400): If the direction is not TURN_LEFT or TURN_RIGHT
+    - HTTPException: If iterations is less than 1.
+    """
+    if request.direction not in [MoveType.TURN_LEFT, MoveType.TURN_RIGHT]:
+        raise HTTPException(status_code=400, detail="Direction must be TURN_LEFT or TURN_RIGHT")
+
+    move_service.turn(request.direction, request.iterations)
+    return {"message": f"Robot turned {request.direction.value} for {request.iterations} iterations"}
 
 
 @app.post("/led", response_model=MessageResponse)
@@ -213,29 +245,18 @@ async def take_photo():
             os.unlink(photo_path)
 
 
-@app.post("/turn", response_model=MoveResponse)
-async def turn_robot(request: TurnRequest) -> Dict[str, Any]:
+@app.get("/ultrasonic/distance", response_model=DistanceResponse)
+async def get_distance() -> DistanceResponse:
     """
-    Command the hexapod robot to turn left or right.
+    Get the current distance reading from the ultrasonic sensor.
 
-    This endpoint allows you to control the robot's turning movement by specifying
-    the direction and number of iterations.
-
-    Parameters:
-    - direction (MoveType): The direction to turn. Must be either:
-        - TURN_LEFT: Turn the robot left
-        - TURN_RIGHT: Turn the robot right
-    - iterations (int): The number of times to repeat the turn (default is 1)
+    This endpoint retrieves the distance measurement from the hexapod's ultrasonic sensor.
 
     Returns:
-    - A JSON object with a message describing the executed turn.
+    - A JSON object containing the measured distance in centimeters.
 
     Raises:
-    - HTTPException (400): If the direction is not TURN_LEFT or TURN_RIGHT
-    - HTTPException: If iterations is less than 1.
+    - HTTPException: If there's an error reading from the ultrasonic sensor.
     """
-    if request.direction not in [MoveType.TURN_LEFT, MoveType.TURN_RIGHT]:
-        raise HTTPException(status_code=400, detail="Direction must be TURN_LEFT or TURN_RIGHT")
-
-    move_service.turn(request.direction, request.iterations)
-    return {"message": f"Robot turned {request.direction.value} for {request.iterations} iterations"}
+    distance = ultrasonic_service.get_distance()
+    return DistanceResponse(distance=distance)
