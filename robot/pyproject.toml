@@ -33,7 +33,7 @@ dependencies = [
   "gpiozero",
   "lgpio",
   "fastapi",
-  "uvicorn"
+  "uvicorn",
 ]
 
 [project.urls]
@@ -47,7 +47,7 @@ path = "llm_hexapot/__about__.py"
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
-  #"Pillow",
+  # "Pillow",
   "opencv-python-headless",
   "opencv-contrib-python-headless",
   "numpy",

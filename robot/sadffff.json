@@ -1,0 +1,58 @@
+{'metadata': {},
+ 'max_runs_per_component': 100,
+ 'components': {'robot': {'type': 'haystack_experimental.components.tools.openapi.openapi_tool.OpenAPITool',
+   'init_parameters': {'generator_api': 'openai',
+    'generator_api_params': {},
+    'spec': 'https: //raw.githubusercontent.com/ArzelaAscoIi/llm-robot/refs/heads/main/openapi.yaml',
+    'credentials': None,
+    'allowed_operations': None
+            }
+        },
+  'builder': {'type': 'haystack.components.builders.chat_prompt_builder.ChatPromptBuilder',
+   'init_parameters': {'template': [
+                    {'content': 'You are a robot with a task.',
+      'role': 'system',
+      'name': None,
+      'meta': {}
+                    },
+                    {'content': '{
+                            {user_message
+                            }
+                        }', 'role': 'user', 'name': None, 'meta': {}
+                    },
+                    {'content': '{
+                            {service_response
+                            }
+                        }',
+      'role': 'user',
+      'name': None,
+      'meta': {}
+                    }
+                ],
+    'variables': None,
+    'required_variables': None
+            }
+        },
+  'llm': {'type': 'haystack.components.generators.chat.openai.OpenAIChatGenerator',
+   'init_parameters': {'model': 'gpt-4o-mini',
+    'streaming_callback': None,
+    'api_base_url': None,
+    'organization': None,
+    'generation_kwargs': {'max_tokens': 1024
+                },
+    'api_key': {'type': 'env_var',
+     'env_vars': ['OPENAI_API_KEY'
+                    ],
+     'strict': True
+                }
+            }
+        }
+    },
+ 'connections': [
+        {'sender': 'robot.service_response',
+   'receiver': 'builder.service_response'
+        },
+        {'sender': 'builder.prompt', 'receiver': 'llm.messages'
+        }
+    ]
+}

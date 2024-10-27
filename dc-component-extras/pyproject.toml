@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dc-custom-component"
+description = 'Custom Haystack component to be used with deepset Cloud'
+readme = "README.md"
+requires-python = ">=3.10,<3.13" # deepset cloud at the moment uses 3.10
+license = "MIT"
+keywords = []
+authors = [
+  { name = "deepset", email = "platform-engineering-exploration@deepset.de" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = ["haystack-ai>=2.0.0", "haystack_experimental", "jsonref"]
+dynamic = ["version"]
+
+[tool.hatch.version]
+path = "src/dc_custom_component/__about__.py"
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.10", "3.11"]
+
+[tool.hatch.envs.default]
+dependencies = ["pytest==7.4.2"]
+
+[tool.hatch.envs.default.scripts]
+tests = "pytest -vv tests"
+
+[tool.hatch.envs.dc]
+detached = true
+
+[tool.hatch.envs.dc.scripts]
+build = "mkdir -p dist && zip -x dist/ dist/* -r dist/custom_component.zip ./*"
+push = "curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
+build-and-push = "mkdir -p dist && zip -x dist/ dist/* -r dist/custom_component.zip ./* && curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\" --form 'file=@dist/custom_component.zip;type=application/zip'"
+list = "curl --request GET --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header 'accept: application/json' --header \"Authorization: Bearer $API_KEY\""
+build-windows = "powershell -Command \"& {{ if (-Not (Test-Path dist)) {{mkdir dist}}; if (Test-Path dist/custom_component.zip) {{ Remove-Item dist/custom_component.zip }}; Get-ChildItem -Path . | Where-Object {{ $_.FullName -notlike '*\\dist*' }} | Compress-Archive -DestinationPath dist/custom_component.zip -Update }}"
+push-windows = "curl --request POST --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\" --form \"file=@dist/custom_component.zip;type=application/zip\""
+list-windows = "curl --request GET --url https://api.dev.cloud.dpst.dev/api/v2/custom_components --header \"accept: application/json\" --header \"Authorization: Bearer %API_KEY%\""
+
+[tool.hatch.envs.code-quality]
+python = "3.11"
+detached = true
+dependencies = ["black==23.9.1", "mypy==1.9.0", "ruff==0.3.2"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dc_custom_component"]
+
+[tool.hatch.envs.code-quality.scripts]
+all = "mypy src tests && black src tests && ruff check --fix ."
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
