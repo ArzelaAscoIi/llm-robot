@@ -39,37 +39,61 @@ camera_service = CameraService()
 
 # Define request models
 class ServoAngleRequest(BaseModel):
-    servo_id: int = Field(..., description="The unique identifier of the servo motor (1-18)")
-    angle: int = Field(..., description="The desired angle for the servo, typically in the range of 0-180 degrees")
+    servo_id: int = Field(
+        ..., description="The unique identifier of the servo motor (1-18)"
+    )
+    angle: int = Field(
+        ...,
+        description="The desired angle for the servo, typically in the range of 0-180 degrees",
+    )
 
 
 class CameraPositionRequest(BaseModel):
-    x: int = Field(..., description="The horizontal position of the camera, typically in the range of 0-180 degrees")
-    y: int = Field(..., description="The vertical position of the camera, typically in the range of 0-180 degrees")
+    x: int = Field(
+        ...,
+        description="The horizontal position of the camera, typically in the range of 0-180 degrees",
+    )
+    y: int = Field(
+        ...,
+        description="The vertical position of the camera, typically in the range of 0-180 degrees",
+    )
 
 
 class MoveRequest(BaseModel):
     move_type: MoveType = Field(
-        ..., description="The type of movement to perform (e.g., FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN)"
+        ...,
+        description="The type of movement to perform (e.g., FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN)",
     )
-    iterations: int = Field(1, description="The number of times to repeat the movement (default is 1)")
+    iterations: int = Field(
+        1, description="The number of times to repeat the movement (default is 1)"
+    )
 
 
 class LedRequest(BaseModel):
-    mode: LedMode = Field(..., description="The lighting mode to set (e.g., STATIC, BREATHING, RAINBOW)")
+    mode: LedMode = Field(
+        ..., description="The lighting mode to set (e.g., STATIC, BREATHING, RAINBOW)"
+    )
     r: int = Field(..., ge=0, le=255, description="Red color component (0-255)")
     g: int = Field(..., ge=0, le=255, description="Green color component (0-255)")
     b: int = Field(..., ge=0, le=255, description="Blue color component (0-255)")
-    brightness: int = Field(..., ge=0, le=100, description="Overall brightness of the LEDs (0-100)")
+    brightness: int = Field(
+        ..., ge=0, le=100, description="Overall brightness of the LEDs (0-100)"
+    )
 
 
 class BuzzerRequest(BaseModel):
-    duration_ms: int = Field(..., gt=0, description="The duration of the beep in milliseconds")
+    duration_ms: int = Field(
+        ..., gt=0, description="The duration of the beep in milliseconds"
+    )
 
 
 class TurnRequest(BaseModel):
-    direction: MoveType = Field(..., description="The direction to turn (TURN_LEFT or TURN_RIGHT)")
-    iterations: int = Field(1, description="The number of times to repeat the turn (default is 1)")
+    direction: MoveType = Field(
+        ..., description="The direction to turn (TURN_LEFT or TURN_RIGHT)"
+    )
+    iterations: int = Field(
+        1, description="The number of times to repeat the turn (default is 1)"
+    )
 
 
 # Define response models
@@ -149,7 +173,9 @@ async def move_robot(request: MoveRequest) -> Dict[str, Any]:
     """
     move_service.move_type = request.move_type
     move_service.move(request.iterations)
-    return {"message": f"Robot moved {request.move_type.value} for {request.iterations} iterations"}
+    return {
+        "message": f"Robot moved {request.move_type.value} for {request.iterations} iterations"
+    }
 
 
 @app.post("/turn", response_model=MoveResponse)
@@ -174,10 +200,14 @@ async def turn_robot(request: TurnRequest) -> Dict[str, Any]:
     - HTTPException: If iterations is less than 1.
     """
     if request.direction not in [MoveType.TURN_LEFT, MoveType.TURN_RIGHT]:
-        raise HTTPException(status_code=400, detail="Direction must be TURN_LEFT or TURN_RIGHT")
+        raise HTTPException(
+            status_code=400, detail="Direction must be TURN_LEFT or TURN_RIGHT"
+        )
 
     move_service.turn(request.direction, request.iterations)
-    return {"message": f"Robot turned {request.direction.value} for {request.iterations} iterations"}
+    return {
+        "message": f"Robot turned {request.direction.value} for {request.iterations} iterations"
+    }
 
 
 @app.post("/led", response_model=MessageResponse)
@@ -252,7 +282,9 @@ async def take_photo():
             photo_path = temp_file.name
 
             camera_service.capture_photo(photo_path)
-            return FileResponse(photo_path, media_type="image/jpeg", filename="hexapod_photo.jpg")
+            return FileResponse(
+                photo_path, media_type="image/jpeg", filename="hexapod_photo.jpg"
+            )
     finally:
         # Clean up the temporary file
         if "photo_path" in locals():

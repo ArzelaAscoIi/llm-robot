@@ -39,7 +39,9 @@ def test_Led():
             print("\nEnd of program")
     else:
         try:
-            print("\nRaspberry PI 5 is currently being used, which is unsupported hardware.")
+            print(
+                "\nRaspberry PI 5 is currently being used, which is unsupported hardware."
+            )
         except KeyboardInterrupt:
             print("\nEnd of program")
 

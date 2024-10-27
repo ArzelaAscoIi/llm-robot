@@ -44,7 +44,9 @@ class Server:
 
     def get_interface_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", b"wlan0"[:15]))[20:24])
+        return socket.inet_ntoa(
+            fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", b"wlan0"[:15]))[20:24]
+        )
 
     def turn_on_server(self):
         # ip adress
@@ -147,7 +149,14 @@ class Server:
                 elif cmd.CMD_POWER in data:
                     try:
                         batteryVoltage = self.adc.batteryPower()
-                        command = cmd.CMD_POWER + "#" + str(batteryVoltage[0]) + "#" + str(batteryVoltage[1]) + "\n"
+                        command = (
+                            cmd.CMD_POWER
+                            + "#"
+                            + str(batteryVoltage[0])
+                            + "#"
+                            + str(batteryVoltage[1])
+                            + "\n"
+                        )
                         # print(command)
                         self.send_data(self.connection1, command)
                         if batteryVoltage[0] < 5.5 or batteryVoltage[1] < 6:
@@ -164,7 +173,9 @@ class Server:
                             stop_thread(thread_led)
                         except:
                             pass
-                        thread_led = threading.Thread(target=self.led.light, args=(data,))
+                        thread_led = threading.Thread(
+                            target=self.led.light, args=(data,)
+                        )
                         thread_led.start()
 
                 elif cmd.CMD_LED_MOD in data:
@@ -175,10 +186,14 @@ class Server:
                         except:
                             # print("stop,no")
                             pass
-                        thread_led = threading.Thread(target=self.led.light, args=(data,))
+                        thread_led = threading.Thread(
+                            target=self.led.light, args=(data,)
+                        )
                         thread_led.start()
                 elif cmd.CMD_SONIC in data:
-                    command = cmd.CMD_SONIC + "#" + str(self.sonic.get_distance()) + "\n"
+                    command = (
+                        cmd.CMD_SONIC + "#" + str(self.sonic.get_distance()) + "\n"
+                    )
                     self.send_data(self.connection1, command)
                 elif cmd.CMD_HEAD in data:
                     if len(data) == 3:

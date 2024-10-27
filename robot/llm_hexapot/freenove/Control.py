@@ -33,9 +33,30 @@ class Control:
             [-137.1, 189.4, self.height],
         ]
         self.calibration_leg_point = self.readFromTxt("point")
-        self.leg_point = [[140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0]]
-        self.calibration_angle = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        self.angle = [[90, 0, 0], [90, 0, 0], [90, 0, 0], [90, 0, 0], [90, 0, 0], [90, 0, 0]]
+        self.leg_point = [
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+        ]
+        self.calibration_angle = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+        ]
+        self.angle = [
+            [90, 0, 0],
+            [90, 0, 0],
+            [90, 0, 0],
+            [90, 0, 0],
+            [90, 0, 0],
+            [90, 0, 0],
+        ]
         self.order = ["", "", "", "", "", ""]
         self.calibration()
         self.setLegAngle()
@@ -84,12 +105,27 @@ class Control:
         b = math.pi / 180 * b
         c = math.pi / 180 * c
         ox = round(l3 * math.sin(b + c) + l2 * math.sin(b))
-        oy = round(l3 * math.sin(a) * math.cos(b + c) + l2 * math.sin(a) * math.cos(b) + l1 * math.sin(a))
-        oz = round(l3 * math.cos(a) * math.cos(b + c) + l2 * math.cos(a) * math.cos(b) + l1 * math.cos(a))
+        oy = round(
+            l3 * math.sin(a) * math.cos(b + c)
+            + l2 * math.sin(a) * math.cos(b)
+            + l1 * math.sin(a)
+        )
+        oz = round(
+            l3 * math.cos(a) * math.cos(b + c)
+            + l2 * math.cos(a) * math.cos(b)
+            + l1 * math.cos(a)
+        )
         return ox, oy, oz
 
     def calibration(self):
-        self.leg_point = [[140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0], [140, 0, 0]]
+        self.leg_point = [
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+            [140, 0, 0],
+        ]
         for i in range(6):
             (
                 self.calibration_angle[i][0],
@@ -101,31 +137,55 @@ class Control:
                 self.calibration_leg_point[i][1],
             )
         for i in range(6):
-            self.angle[i][0], self.angle[i][1], self.angle[i][2] = self.coordinateToAngle(
+            (
+                self.angle[i][0],
+                self.angle[i][1],
+                self.angle[i][2],
+            ) = self.coordinateToAngle(
                 -self.leg_point[i][2], self.leg_point[i][0], self.leg_point[i][1]
             )
 
         for i in range(6):
-            self.calibration_angle[i][0] = self.calibration_angle[i][0] - self.angle[i][0]
-            self.calibration_angle[i][1] = self.calibration_angle[i][1] - self.angle[i][1]
-            self.calibration_angle[i][2] = self.calibration_angle[i][2] - self.angle[i][2]
+            self.calibration_angle[i][0] = (
+                self.calibration_angle[i][0] - self.angle[i][0]
+            )
+            self.calibration_angle[i][1] = (
+                self.calibration_angle[i][1] - self.angle[i][1]
+            )
+            self.calibration_angle[i][2] = (
+                self.calibration_angle[i][2] - self.angle[i][2]
+            )
 
     def setLegAngle(self):
         if self.checkPoint():
             for i in range(6):
-                self.angle[i][0], self.angle[i][1], self.angle[i][2] = self.coordinateToAngle(
+                (
+                    self.angle[i][0],
+                    self.angle[i][1],
+                    self.angle[i][2],
+                ) = self.coordinateToAngle(
                     -self.leg_point[i][2], self.leg_point[i][0], self.leg_point[i][1]
                 )
             for i in range(3):
-                self.angle[i][0] = self.restriction(self.angle[i][0] + self.calibration_angle[i][0], 0, 180)
-                self.angle[i][1] = self.restriction(90 - (self.angle[i][1] + self.calibration_angle[i][1]), 0, 180)
-                self.angle[i][2] = self.restriction(self.angle[i][2] + self.calibration_angle[i][2], 0, 180)
-                self.angle[i + 3][0] = self.restriction(self.angle[i + 3][0] + self.calibration_angle[i + 3][0], 0, 180)
+                self.angle[i][0] = self.restriction(
+                    self.angle[i][0] + self.calibration_angle[i][0], 0, 180
+                )
+                self.angle[i][1] = self.restriction(
+                    90 - (self.angle[i][1] + self.calibration_angle[i][1]), 0, 180
+                )
+                self.angle[i][2] = self.restriction(
+                    self.angle[i][2] + self.calibration_angle[i][2], 0, 180
+                )
+                self.angle[i + 3][0] = self.restriction(
+                    self.angle[i + 3][0] + self.calibration_angle[i + 3][0], 0, 180
+                )
                 self.angle[i + 3][1] = self.restriction(
                     90 + self.angle[i + 3][1] + self.calibration_angle[i + 3][1], 0, 180
                 )
                 self.angle[i + 3][2] = self.restriction(
-                    180 - (self.angle[i + 3][2] + self.calibration_angle[i + 3][2]), 0, 180
+                    180 - (self.angle[i + 3][2] + self.calibration_angle[i + 3][2]),
+                    0,
+                    180,
                 )
 
             # leg1
@@ -164,7 +224,11 @@ class Control:
         flag = True
         leg_lenght = [0, 0, 0, 0, 0, 0]
         for i in range(6):
-            leg_lenght[i] = math.sqrt(self.leg_point[i][0] ** 2 + self.leg_point[i][1] ** 2 + self.leg_point[i][2] ** 2)
+            leg_lenght[i] = math.sqrt(
+                self.leg_point[i][0] ** 2
+                + self.leg_point[i][1] ** 2
+                + self.leg_point[i][2] ** 2
+            )
         for i in range(6):
             if leg_lenght[i] > 248 or leg_lenght[i] < 90:
                 flag = False
@@ -172,7 +236,11 @@ class Control:
 
     def condition(self):
         while True:
-            if (time.time() - self.timeout) > 10 and self.timeout != 0 and self.order[0] == "":
+            if (
+                (time.time() - self.timeout) > 10
+                and self.timeout != 0
+                and self.order[0] == ""
+            ):
                 self.timeout = time.time()
                 self.relax(True)
                 self.flag = 0x00
@@ -266,47 +334,63 @@ class Control:
     def coordinateTransformation(self, point):
         # leg1
         self.leg_point[0][0] = (
-            point[0][0] * math.cos(54 / 180 * math.pi) + point[0][1] * math.sin(54 / 180 * math.pi) - 94
+            point[0][0] * math.cos(54 / 180 * math.pi)
+            + point[0][1] * math.sin(54 / 180 * math.pi)
+            - 94
         )
-        self.leg_point[0][1] = -point[0][0] * math.sin(54 / 180 * math.pi) + point[0][1] * math.cos(54 / 180 * math.pi)
+        self.leg_point[0][1] = -point[0][0] * math.sin(54 / 180 * math.pi) + point[0][
+            1
+        ] * math.cos(54 / 180 * math.pi)
         self.leg_point[0][2] = point[0][2] - 14
         # leg2
         self.leg_point[1][0] = (
-            point[1][0] * math.cos(0 / 180 * math.pi) + point[1][1] * math.sin(0 / 180 * math.pi) - 85
+            point[1][0] * math.cos(0 / 180 * math.pi)
+            + point[1][1] * math.sin(0 / 180 * math.pi)
+            - 85
         )
-        self.leg_point[1][1] = -point[1][0] * math.sin(0 / 180 * math.pi) + point[1][1] * math.cos(0 / 180 * math.pi)
+        self.leg_point[1][1] = -point[1][0] * math.sin(0 / 180 * math.pi) + point[1][
+            1
+        ] * math.cos(0 / 180 * math.pi)
         self.leg_point[1][2] = point[1][2] - 14
         # leg3
         self.leg_point[2][0] = (
-            point[2][0] * math.cos(-54 / 180 * math.pi) + point[2][1] * math.sin(-54 / 180 * math.pi) - 94
+            point[2][0] * math.cos(-54 / 180 * math.pi)
+            + point[2][1] * math.sin(-54 / 180 * math.pi)
+            - 94
         )
-        self.leg_point[2][1] = -point[2][0] * math.sin(-54 / 180 * math.pi) + point[2][1] * math.cos(
-            -54 / 180 * math.pi
-        )
+        self.leg_point[2][1] = -point[2][0] * math.sin(-54 / 180 * math.pi) + point[2][
+            1
+        ] * math.cos(-54 / 180 * math.pi)
         self.leg_point[2][2] = point[2][2] - 14
         # leg4
         self.leg_point[3][0] = (
-            point[3][0] * math.cos(-126 / 180 * math.pi) + point[3][1] * math.sin(-126 / 180 * math.pi) - 94
+            point[3][0] * math.cos(-126 / 180 * math.pi)
+            + point[3][1] * math.sin(-126 / 180 * math.pi)
+            - 94
         )
-        self.leg_point[3][1] = -point[3][0] * math.sin(-126 / 180 * math.pi) + point[3][1] * math.cos(
-            -126 / 180 * math.pi
-        )
+        self.leg_point[3][1] = -point[3][0] * math.sin(-126 / 180 * math.pi) + point[3][
+            1
+        ] * math.cos(-126 / 180 * math.pi)
         self.leg_point[3][2] = point[3][2] - 14
         # leg5
         self.leg_point[4][0] = (
-            point[4][0] * math.cos(180 / 180 * math.pi) + point[4][1] * math.sin(180 / 180 * math.pi) - 85
+            point[4][0] * math.cos(180 / 180 * math.pi)
+            + point[4][1] * math.sin(180 / 180 * math.pi)
+            - 85
         )
-        self.leg_point[4][1] = -point[4][0] * math.sin(180 / 180 * math.pi) + point[4][1] * math.cos(
-            180 / 180 * math.pi
-        )
+        self.leg_point[4][1] = -point[4][0] * math.sin(180 / 180 * math.pi) + point[4][
+            1
+        ] * math.cos(180 / 180 * math.pi)
         self.leg_point[4][2] = point[4][2] - 14
         # leg6
         self.leg_point[5][0] = (
-            point[5][0] * math.cos(126 / 180 * math.pi) + point[5][1] * math.sin(126 / 180 * math.pi) - 94
+            point[5][0] * math.cos(126 / 180 * math.pi)
+            + point[5][1] * math.sin(126 / 180 * math.pi)
+            - 94
         )
-        self.leg_point[5][1] = -point[5][0] * math.sin(126 / 180 * math.pi) + point[5][1] * math.cos(
-            126 / 180 * math.pi
-        )
+        self.leg_point[5][1] = -point[5][0] * math.sin(126 / 180 * math.pi) + point[5][
+            1
+        ] * math.cos(126 / 180 * math.pi)
         self.leg_point[5][2] = point[5][2] - 14
 
     def restriction(self, var, v_min, v_max):
@@ -335,16 +419,38 @@ class Control:
         pos = np.mat([0.0, 0.0, self.height]).T
         rpy = np.array([r, p, y]) * math.pi / 180
         R, P, Y = rpy[0], rpy[1], rpy[2]
-        rotx = np.mat([[1, 0, 0], [0, math.cos(P), -math.sin(P)], [0, math.sin(P), math.cos(P)]])
-        roty = np.mat([[math.cos(R), 0, -math.sin(R)], [0, 1, 0], [math.sin(R), 0, math.cos(R)]])
-        rotz = np.mat([[math.cos(Y), -math.sin(Y), 0], [math.sin(Y), math.cos(Y), 0], [0, 0, 1]])
+        rotx = np.mat(
+            [[1, 0, 0], [0, math.cos(P), -math.sin(P)], [0, math.sin(P), math.cos(P)]]
+        )
+        roty = np.mat(
+            [[math.cos(R), 0, -math.sin(R)], [0, 1, 0], [math.sin(R), 0, math.cos(R)]]
+        )
+        rotz = np.mat(
+            [[math.cos(Y), -math.sin(Y), 0], [math.sin(Y), math.cos(Y), 0], [0, 0, 1]]
+        )
 
         rot_mat = rotx * roty * rotz
 
-        np.mat([[55, 76, 0], [85, 0, 0], [55, -76, 0], [-55, -76, 0], [-85, 0, 0], [-55, 76, 0]]).T
+        np.mat(
+            [
+                [55, 76, 0],
+                [85, 0, 0],
+                [55, -76, 0],
+                [-55, -76, 0],
+                [-85, 0, 0],
+                [-55, 76, 0],
+            ]
+        ).T
 
         footpoint_struc = np.mat(
-            [[137.1, 189.4, 0], [225, 0, 0], [137.1, -189.4, 0], [-137.1, -189.4, 0], [-225, 0, 0], [-137.1, 189.4, 0]]
+            [
+                [137.1, 189.4, 0],
+                [225, 0, 0],
+                [137.1, -189.4, 0],
+                [-137.1, -189.4, 0],
+                [-225, 0, 0],
+                [-137.1, 189.4, 0],
+            ]
         ).T
 
         AB = np.mat(np.zeros((3, 6)))
@@ -361,7 +467,10 @@ class Control:
         self.coordinateTransformation(point)
         self.setLegAngle()
         time.sleep(2)
-        self.imu.Error_value_accel_data, self.imu.Error_value_gyro_data = self.imu.average_filter()
+        (
+            self.imu.Error_value_accel_data,
+            self.imu.Error_value_gyro_data,
+        ) = self.imu.average_filter()
         time.sleep(1)
         while True:
             if self.order[0] != "":
@@ -376,7 +485,9 @@ class Control:
             self.coordinateTransformation(point)
             self.setLegAngle()
 
-    def run(self, data, Z=40, F=64):  # example : data=['CMD_MOVE', '1', '0', '25', '10', '0']
+    def run(
+        self, data, Z=40, F=64
+    ):  # example : data=['CMD_MOVE', '1', '0', '25', '10', '0']
         gait = data[1]
         x = self.restriction(int(data[2]), -35, 35)
         y = self.restriction(int(data[3]), -35, 35)

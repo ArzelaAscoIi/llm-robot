@@ -80,12 +80,24 @@ class IMU:
         accel_data = self.sensor.get_accel_data()
 
         gyro_data = self.sensor.get_gyro_data()
-        ax = self.kalman_filter_AX.kalman(accel_data["x"] - self.Error_value_accel_data["x"])
-        ay = self.kalman_filter_AY.kalman(accel_data["y"] - self.Error_value_accel_data["y"])
-        az = self.kalman_filter_AZ.kalman(accel_data["z"] - self.Error_value_accel_data["z"])
-        gx = self.kalman_filter_GX.kalman(gyro_data["x"] - self.Error_value_gyro_data["x"])
-        gy = self.kalman_filter_GY.kalman(gyro_data["y"] - self.Error_value_gyro_data["y"])
-        gz = self.kalman_filter_GZ.kalman(gyro_data["z"] - self.Error_value_gyro_data["z"])
+        ax = self.kalman_filter_AX.kalman(
+            accel_data["x"] - self.Error_value_accel_data["x"]
+        )
+        ay = self.kalman_filter_AY.kalman(
+            accel_data["y"] - self.Error_value_accel_data["y"]
+        )
+        az = self.kalman_filter_AZ.kalman(
+            accel_data["z"] - self.Error_value_accel_data["z"]
+        )
+        gx = self.kalman_filter_GX.kalman(
+            gyro_data["x"] - self.Error_value_gyro_data["x"]
+        )
+        gy = self.kalman_filter_GY.kalman(
+            gyro_data["y"] - self.Error_value_gyro_data["y"]
+        )
+        gz = self.kalman_filter_GZ.kalman(
+            gyro_data["z"] - self.Error_value_gyro_data["z"]
+        )
 
         norm = math.sqrt(ax * ax + ay * ay + az * az)
 
@@ -95,7 +107,12 @@ class IMU:
 
         vx = 2 * (self.q1 * self.q3 - self.q0 * self.q2)
         vy = 2 * (self.q0 * self.q1 + self.q2 * self.q3)
-        vz = self.q0 * self.q0 - self.q1 * self.q1 - self.q2 * self.q2 + self.q3 * self.q3
+        vz = (
+            self.q0 * self.q0
+            - self.q1 * self.q1
+            - self.q2 * self.q2
+            + self.q3 * self.q3
+        )
 
         ex = ay * vz - az * vy
         ey = az * vx - ax * vz
@@ -114,7 +131,12 @@ class IMU:
         self.q2 += (self.q0 * gy - self.q1 * gz + self.q3 * gx) * self.halfT
         self.q3 += (self.q0 * gz + self.q1 * gy - self.q2 * gx) * self.halfT
 
-        norm = math.sqrt(self.q0 * self.q0 + self.q1 * self.q1 + self.q2 * self.q2 + self.q3 * self.q3)
+        norm = math.sqrt(
+            self.q0 * self.q0
+            + self.q1 * self.q1
+            + self.q2 * self.q2
+            + self.q3 * self.q3
+        )
         self.q0 /= norm
         self.q1 /= norm
         self.q2 /= norm
@@ -123,14 +145,18 @@ class IMU:
         pitch = math.asin(-2 * self.q1 * self.q3 + 2 * self.q0 * self.q2) * 57.3
         roll = (
             math.atan2(
-                2 * self.q2 * self.q3 + 2 * self.q0 * self.q1, -2 * self.q1 * self.q1 - 2 * self.q2 * self.q2 + 1
+                2 * self.q2 * self.q3 + 2 * self.q0 * self.q1,
+                -2 * self.q1 * self.q1 - 2 * self.q2 * self.q2 + 1,
             )
             * 57.3
         )
         yaw = (
             math.atan2(
                 2 * (self.q1 * self.q2 + self.q0 * self.q3),
-                self.q0 * self.q0 + self.q1 * self.q1 - self.q2 * self.q2 - self.q3 * self.q3,
+                self.q0 * self.q0
+                + self.q1 * self.q1
+                - self.q2 * self.q2
+                - self.q3 * self.q3,
             )
             * 57.3
         )

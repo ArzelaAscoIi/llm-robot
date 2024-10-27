@@ -9,7 +9,9 @@ class Ultrasonic:
     def __init__(self):
         pass
 
-    def get_distance(self):  # get the measurement results of ultrasonic module,with unit: cm
+    def get_distance(
+        self,
+    ):  # get the measurement results of ultrasonic module,with unit: cm
         distance_cm = sensor.distance * 100
         return int(distance_cm)
 
